@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -36,7 +37,9 @@ class PostController extends Controller
             'body' => ['required'],
         ]);
 
-        Post::create($data);
+        $post = array_merge($data, ['slug' => Str::slug($data['title']), 'user_id' => auth()->user()->id]);
+
+        Post::create($post);
 
         return to_route('post.index')->with('message', 'Post created success.');
     }
